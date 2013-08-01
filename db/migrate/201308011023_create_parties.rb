@@ -6,7 +6,7 @@ class CreateParties < ActiveRecord::Migration
   def change
     # HINT: checkout ActiveRecord::Migration.create_table
     create_table :parties do |t| 
-      t.string :party
+      t.string :name
     end
   end
 end

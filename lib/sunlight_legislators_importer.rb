@@ -1,15 +1,44 @@
 require 'csv'
+require 'date'
+require_relative '../app/models/congressman.rb'
+require_relative '../app/models/party.rb'
+
+CSV_FILE = ''
 
 class SunlightLegislatorsImporter
-  def self.import(filename)
-    csv = CSV.new(File.open(filename), :headers => true)
-    csv.each do |row|
-      row.each do |field, value|
-        # TODO: begin
-        raise NotImplementedError, "TODO: figure out what to do with this row and do it!"
-        # TODO: end
-      end
+
+  def self.import(filename = CSV_FILE)
+    parties = ['D', 'R', 'I']
+    parties.each do |name|
+      Party.create({ name: name })
     end
+
+    CSV.table(filename).each do |row|
+      args = {}
+      args[:title] = row[:title]
+
+      args[:name] = "#{row[:firstname]} #{row[:middlename]} #{row[:lastname]} #{row[:name_suffix]}".rstrip
+      args[:state] = row[:state]
+      args[:in_office] = row[:in_office] == 1 ? true : false
+      args[:gender] = row[:gender]
+      args[:phone] = row[:phone].gsub(/\D+/, '')
+      args[:fax] = row[:fax].gsub(/\D+/, '')
+      args[:website] = row[:website]
+      args[:webform]  = row[:webform]
+      args[:twitter_id] = row[:twitter_id]
+
+      birthdate = case row[:birthdate]
+                  when /\s+/ then nil
+                  else Date.strptime row[:birthdate], '%m/%d/%Y'
+                  end
+      args[:birthdate] = birthdate
+
+      congressman = Congressman.new(args)
+
+      congressman.party = Party.where('name = ?', row[:party]).first
+      congressman.save
+    end
+
   end
 end
 
