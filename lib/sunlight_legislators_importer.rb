@@ -14,10 +14,13 @@ class SunlightLegislatorsImporter
     end
 
     CSV.table(filename).each do |row|
+      
       args = {}
       args[:title] = row[:title]
 
       args[:name] = "#{row[:firstname]} #{row[:middlename]} #{row[:lastname]} #{row[:name_suffix]}".rstrip
+      args[:last_name] = row[:lastname]
+
       args[:state] = row[:state]
       args[:in_office] = row[:in_office] == 1 ? true : false
       args[:gender] = row[:gender]

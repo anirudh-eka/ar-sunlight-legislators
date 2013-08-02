@@ -7,6 +7,7 @@ class CreateCongressmen < ActiveRecord::Migration
     create_table :congressmen do |t|
       t.string :title
       t.string :name
+      t.string :last_name
       t.belongs_to :party
       t.string :state
       t.boolean :in_office
